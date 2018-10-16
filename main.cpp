@@ -1,4 +1,3 @@
-//g++ main_x16057_09.cpp -framework OpenGL -framework GLUT `pkg-config --cflags opencv --libs opencv`
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -38,11 +37,11 @@ int mButton, mState, mX, mY;  //マウス情報
 int main(int argc, char *argv[])
 {
     glutInit(&argc, argv);  //OpenGL,GLUTの初期化
-    
+
     initGL();  //初期設定
-    
+
     glutMainLoop();  //イベント待ち無限ループ突入
-    
+
     return 0;
 }
 
@@ -53,7 +52,7 @@ void initGL()
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);  //ディスプレイ表示モード指定
     glutInitWindowSize(800, 600);  //ウィンドウサイズの指定（800×600）
     glutCreateWindow("CG09");  //ウィンドウ生成
-    
+
     //コールバック関数指定
     glutDisplayFunc(display);  //ディスプレイコールバック関数（"display"）
     glutReshapeFunc(resize);  //リサイズコールバック関数（"resize"）
@@ -61,7 +60,7 @@ void initGL()
     glutMouseFunc(mouse);  //マウスクリックコールバック関数
     glutMotionFunc(motion);  //マウスドラッグコールバック関数
     glutKeyboardFunc(keyboard);  //キーボードコールバック関数
-    
+
     //各種設定
     glClearColor(0.0, 0.0, 0.2, 1.0);  //ウィンドウクリア色の指定（RGBA値）
     glEnable(GL_DEPTH_TEST);  //デプスバッファ有効化
@@ -69,7 +68,7 @@ void initGL()
     glEnable(GL_BLEND); //アルファブレンディング有効化
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //
     glAlphaFunc(GL_GREATER, 0.6); //アルファ値比較関数の指定
-    
+
     //光源
     GLfloat col[4];
     col[0] = 0.9; col[1] = 0.9; col[2] = 0.9; col[3] = 1.0;
@@ -80,7 +79,7 @@ void initGL()
     col[0] = 0.1; col[1] = 0.1; col[2] = 0.1; col[3] = 1.0;
     glLightfv(GL_LIGHT0, GL_AMBIENT, col);
     glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.001);
-    
+
     glEnable(GL_LIGHT1);
     col[0] = 0.9; col[1] = 0.9; col[2] = 0.9; col[3] = 1.0;
     glLightfv(GL_LIGHT1, GL_DIFFUSE, col);
@@ -88,7 +87,7 @@ void initGL()
     col[0] = 0.1; col[1] = 0.1; col[2] = 0.1; col[3] = 1.0;
     glLightfv(GL_LIGHT1, GL_AMBIENT, col);
     glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.001);
-    
+
     //床頂点座標
     fWidth = 100.0;
     for (int j=0; j<TILE; j++) {
@@ -98,14 +97,14 @@ void initGL()
             fPoint[i][j].z = -fWidth/2.0+j*fWidth/(TILE-1);
         }
     }
-    
+
     //視点極座標
     eDist = 120.0;  //距離
     eDegX = 20.0; eDegY = 0.0;  //x軸周り角度，y軸周り角度
-    
+
     //テクスチャ準備
     cv::Mat textureImage; //テクスチャ画像用配列
-    
+
     //テクスチャ0
     textureImage = imread("DPrZhOJVoAArkmU.jpg", cv::IMREAD_UNCHANGED); //画像読み込み
     if(textureImage.data == 0){
@@ -117,11 +116,11 @@ void initGL()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); //テクスチャ縮小時の補間方法
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureImage.cols, textureImage.rows, 0, GL_BGRA,
                  GL_UNSIGNED_BYTE, textureImage.data); //画像をテクスチャに割り当て
-    
-    
-    
-    
-    
+
+
+
+
+
     //テクスチャ1
     textureImage = imread("/Users/x16057xx/CGプログラミング/9回/01.jpg", cv::IMREAD_UNCHANGED); //画像読み込み
     if(textureImage.data == 0){
@@ -132,7 +131,7 @@ void initGL()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); //テクスチャ拡大時の補間方法
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); //テクスチャ縮小時の補間方法
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureImage.cols, textureImage.rows, 0, GL_BGR,GL_UNSIGNED_BYTE, textureImage.data); //画像をテクスチャに割り当て
-    
+
     //テクスチャ2
     textureImage = imread("V4S.png", cv::IMREAD_COLOR); //画像読み込み
     if(textureImage.data == 0){
@@ -151,12 +150,12 @@ void initGL()
 void resize(int w, int h)
 {
     glViewport(0, 0, w, h);  //ビューポート設定（ウィンドウ全体を表示領域に設定）
-    
+
     //投影変換
     glMatrixMode(GL_PROJECTION);  //カレント行列の設定（投影変換行列）
     glLoadIdentity();  //カレント行列初期化
     gluPerspective(30.0, (double)w/(double)h, 1.0, 1000.0);  //透視投影のための投影変換行列の生成
-    
+
     winW = w; winH = h;  //ウィンドウサイズをグローバル変数に格納
 }
 
@@ -164,7 +163,7 @@ void resize(int w, int h)
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  //ウィンドウクリア
-    
+
     //ビューイング変換準備
     glMatrixMode(GL_MODELVIEW);  //カレント行列の設定（モデルビュー変換行列）
     glLoadIdentity();  //行列初期化
@@ -179,14 +178,14 @@ void display()
     }else{
         gluLookAt(e.x, e.y, e.z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);  //視点視線設定（視野変換行列を乗算）
     }
-    
+
     GLfloat lightPos0[] = {-10.0, 15.0, 15.0, 1.0};
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
     GLfloat lightPos1[] = {15.0, 10.0, 15.0, 1.0};
     glLightfv(GL_LIGHT1, GL_POSITION, lightPos1);
-    
+
     GLfloat col[4], spe[4], shi[1];
-    
+
     //----------床パネル----------
     col[0] = 0.0; col[1] = 0.5; col[2] = 0.0; col[3] = 1.0;
     spe[0] = 1.0; spe[1] = 1.0; spe[2] = 1.0; spe[3] = 1.0;
@@ -210,7 +209,7 @@ void display()
         }
     }
     glEnd();  //図形終了
-    
+
 //    //物体1（立方体）
 //    glPushMatrix();  //行列一時保存
 //    col[0] = 0.0; col[1] = 0.0; col[2] = 1.0; col[3] = 1.0;
@@ -224,7 +223,7 @@ void display()
 //    glScaled(5.0, 5.0, 5.0);  //拡大
 //    glutSolidCube(2.0);  //立方体
 //    glPopMatrix();  //行列復帰
-    
+
 //    //物体2（ティーポット）
 //    glPushMatrix();  //行列一時保存
 //    col[0] = 1.0; col[1] = 0.5; col[2] = 0.0; col[3] = 1.0;
@@ -238,9 +237,9 @@ void display()
 //    glScaled(5.0, 5.0, 5.0);  //拡大
 //    glutSolidTeapot(1.0);  //ティーポット
 //    glPopMatrix();  //行列復帰
-    
-    
-    
+
+
+
     //物体3（長方形パネル1）
     glEnable(GL_ALPHA_TEST); //アルファテスト有効化
     glEnable(GL_TEXTURE_2D); //テクスチャ有効化
@@ -270,7 +269,7 @@ void display()
     glPopMatrix();  //行列復帰
     glDisable(GL_TEXTURE_2D); //テクスチャ無効化
     glDisable(GL_ALPHA_TEST); //アルファテスト無効化
-    
+
     //物体4（長方形パネル2）
     glEnable(GL_ALPHA_TEST); //アルファテスト有効化
     glEnable(GL_TEXTURE_2D); //テクスチャ有効化
@@ -313,7 +312,7 @@ void display()
 //    glScaled(5.0, 5.0, 5.0);  //拡大
 //    glutSolidSphere(1.0, 36, 18);  //球
 //    glPopMatrix();  //行列復帰
-    
+
     //物体 6(長方形パネル 3)
     glEnable(GL_ALPHA_TEST); //アルファテスト有効化
     glEnable(GL_TEXTURE_2D); //テクスチャ有効化
@@ -338,7 +337,7 @@ void display()
     glPopMatrix(); //行列復帰
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_ALPHA_TEST); //アルファテスト無効化
-    
+
     glutSwapBuffers();  //OpenGLの命令実行
 }
 
@@ -370,25 +369,25 @@ void motion(int x, int y)
         GLdouble objX, objY, objZ;  //ワールド座標
         GLdouble model[16], proj[16];  //モデルビュー変換行列，投影変換行列格納用
         GLint view[4];  //ビューポート設定格納用
-        
+
         //マウス座標→ウィンドウ座標
         winX = x;
         winY = winH-y;
         glReadPixels(winX, winY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ);
-        
+
         //変換行列取り出し
         glGetDoublev(GL_MODELVIEW_MATRIX, model);  //モデルビュー変換行列格納
         glGetDoublev(GL_PROJECTION_MATRIX, proj);  //投影変換行列格納
         glGetIntegerv(GL_VIEWPORT, view);  //ビューポート設定格納
-        
+
         //ウィンドウ座標→ワールド座標（objX, objY, objZ）
         gluUnProject(winX, winY, winZ, model, proj, view, &objX, &objY, &objZ);
-        
+
         //(fPoint[0][0].x,fPoint[0][0].y,fPoint[0][0].z)と(objX, objY, objZ)の距離
         for (int j=0; j<TILE; j++) {
             for (int i=0; i<TILE; i++) {
                 double dist = sqrt(pow(fPoint[i][j].x-objX, 2)+pow(fPoint[i][j].y-objY, 2)+pow(fPoint[i][j].z-objZ, 2));
-                
+
                 if (dist<10) {
                     //床面を持ち上げる
                     fPoint[i][j].y += (10-dist)*0.1;
@@ -397,7 +396,7 @@ void motion(int x, int y)
             }
         }
     }
-    
+
     //マウス座標をグローバル変数に保存
     mX = x; mY = y;
 }
@@ -411,7 +410,7 @@ void keyboard(unsigned char key, int x, int y)
         case 'Q':  //[Q]キー
             exit(0);  //プロセス終了
             break;
-            
+
         default:
             break;
     }
@@ -421,12 +420,12 @@ void keyboard(unsigned char key, int x, int y)
 Vec_3D normcrossprod(Vec_3D v1, Vec_3D v2)
 {
     Vec_3D out;
-    
+
     out.x = v1.y*v2.z-v1.z*v2.y;
     out.y = v1.z*v2.x-v1.x*v2.z;
     out.z = v1.x*v2.y-v1.y*v2.x;
     vectorNormalize(&out);
-    
+
     return out;
 }
 
@@ -434,11 +433,11 @@ Vec_3D normcrossprod(Vec_3D v1, Vec_3D v2)
 Vec_3D diffVec(Vec_3D v1, Vec_3D v2)
 {
     Vec_3D out;
-    
+
     out.x = v1.x-v2.x;
     out.y = v1.y-v2.y;
     out.z = v1.z-v2.z;
-    
+
     return out;
 }
 
@@ -446,10 +445,10 @@ Vec_3D diffVec(Vec_3D v1, Vec_3D v2)
 double vectorNormalize(Vec_3D* vec)
 {
     double length;
-    
+
     //ベクトル長
     length = sqrt(vec->x*vec->x+vec->y*vec->y+vec->z*vec->z);
-    
+
     if (length>0) {
         //正規化
         vec->x = vec->x/length;
