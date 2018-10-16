@@ -4,7 +4,6 @@
 #include <math.h>
 #include <GLUT/glut.h>  //OpenGL/GLUT
 #include  <opencv2/opencv.hpp> //OpenCV
-//urushima
 #define TILE 50  //床頂点数
 
 //三次元ベクトル構造体: Vec_3D
